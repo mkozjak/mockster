@@ -6,9 +6,9 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/mkozjak/mockster/services"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"uniqcast.com/packetize/messaging"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 type Env struct {
-	broker messaging.Broker
+	// broker messaging.Broker
 }
 
 func init() {
@@ -36,7 +36,7 @@ func init() {
 }
 
 func cliUsage() {
-	fmt.Println("Usage: packetize [options]\n")
+	fmt.Println("Usage: mockster [options]\n")
 	fmt.Println("Options:")
 	pflag.PrintDefaults()
 }
@@ -50,23 +50,14 @@ func main() {
 	viper.SetConfigName("config")
 
 	if err := viper.ReadInConfig(); err != nil {
-		log.Println("failed parsing config file with", err)
+		log.Println("failed parsing config file:", err)
 		os.Exit(1)
 	}
 
-	// connect to service bus
-	if viper.GetBool("nats.enabled") == true {
-		_, err := messaging.Run("nats://" +
-			viper.GetString("nats.hostname") + ":" +
-			viper.GetString("nats.port"))
-
-		if err != nil {
-			log.Println("failed connecting to service bus with", err)
-			os.Exit(1)
-		}
+	if err := services.RunAll(); err != nil {
+		log.Println("failed running services:", err)
+		os.Exit(1)
 	}
-
-	// env := &Env{m}
 
 	runtime.Goexit()
 }
