@@ -55,13 +55,15 @@ func main() {
 	}
 
 	// connect to service bus
-	_, err := messaging.Run("nats://" +
-		viper.GetString("nats.hostname") + ":" +
-		viper.GetString("nats.port"))
+	if viper.GetBool("nats.enabled") == true {
+		_, err := messaging.Run("nats://" +
+			viper.GetString("nats.hostname") + ":" +
+			viper.GetString("nats.port"))
 
-	if err != nil {
-		log.Println("failed connecting to service bus with", err)
-		os.Exit(1)
+		if err != nil {
+			log.Println("failed connecting to service bus with", err)
+			os.Exit(1)
+		}
 	}
 
 	// env := &Env{m}
