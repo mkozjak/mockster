@@ -1,3 +1,4 @@
+// Package types implements custom mockster types.
 package types
 
 type Config struct {
