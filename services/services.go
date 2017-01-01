@@ -2,7 +2,7 @@
 package services
 
 import (
-	"log"
+	_ "log"
 
 	"github.com/fatih/structs"
 	"github.com/mkozjak/mockster/services/nats"
@@ -24,17 +24,25 @@ func New(cfg types.Services) (*Env, error) {
 }
 
 func (s *Env) RunAll() error {
-	for i, cfgSrv := range structs.Fields(s.cfgList) {
+	// kinda hacky
+	for _, cfgSrv := range structs.Fields(s.cfgList) {
 		for _, srvName := range s.registered {
-			if srvName == cfgSrv.Name() {
-				// run service
-				switch srvName {
-				case "Nats":
-					nats.Start()
-				}
-
-				break
+			if srvName != cfgSrv.Name() {
+				continue
 			}
+
+			// run service
+			switch srvName {
+			case "Nats":
+				if err := nats.Start(
+					s.cfgList.Nats.Port,
+					s.cfgList.Nats.Hostname); err != nil {
+
+					return err
+				}
+			}
+
+			break
 		}
 	}
 
