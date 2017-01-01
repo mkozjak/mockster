@@ -4,10 +4,22 @@ package services
 import (
 	"log"
 	// "github.com/mkozjak/mockster/services/nats"
+	"github.com/mkozjak/mockster/types"
 )
 
-func RunAll(list map[string]bool) error {
-	log.Println(list)
+type Env struct {
+	list interface{}
+}
 
+func New(cfg types.Services) (*Env, error) {
+	log.Println("OK", cfg.Nats)
+	s := new(Env)
+
+	// s.list = list
+
+	return s, nil
+}
+
+func (s *Env) RunAll() error {
 	return nil
 }

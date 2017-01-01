@@ -6,7 +6,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/mkozjak/mockster/services"
+	srv "github.com/mkozjak/mockster/services"
+	"github.com/mkozjak/mockster/types"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -18,7 +19,7 @@ var (
 )
 
 type Env struct {
-	// broker messaging.Broker
+	conf *viper.Viper
 }
 
 func init() {
@@ -27,12 +28,12 @@ func init() {
 	pflag.StringVar(&natsHost, "nats-hostname", "localhost", "nats hostname")
 	pflag.IntVar(&natsPort, "nats-port", 4222, "nats port")
 
-	viper.BindEnv("nats.hostname", "NATS_HOSTNAME")
-	viper.BindEnv("nats.port", "NATS_PORT")
+	viper.BindEnv("services.nats.hostname", "NATS_HOSTNAME")
+	viper.BindEnv("services.nats.port", "NATS_PORT")
 
-	viper.BindPFlag("nats.hostname", pflag.Lookup("nats-hostname"))
-	viper.BindPFlag("nats.port", pflag.Lookup("nats-port"))
-	viper.BindPFlag("nats.enabled", pflag.Lookup("nats"))
+	viper.BindPFlag("services.nats.hostname", pflag.Lookup("nats-hostname"))
+	viper.BindPFlag("services.nats.port", pflag.Lookup("nats-port"))
+	viper.BindPFlag("services.nats.enabled", pflag.Lookup("nats"))
 }
 
 func cliUsage() {
@@ -54,7 +55,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := services.RunAll(); err != nil {
+	var cfg types.Config
+
+	if err := viper.Unmarshal(&cfg); err != nil {
+		log.Println("unable to decode config:", err)
+		os.Exit(1)
+	}
+
+	// set up and run mock services
+	s, err := srv.New(cfg.Services)
+
+	if err != nil {
+		log.Println("unable to decode config:", err)
+		os.Exit(1)
+	}
+
+	if err := s.RunAll(); err != nil {
 		log.Println("failed running services:", err)
 		os.Exit(1)
 	}
