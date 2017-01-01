@@ -1,4 +1,9 @@
-package services
+package nats
 
-func start() {
+import (
+	"log"
+)
+
+func Start() {
+	log.Println("running nats mock server")
 }
