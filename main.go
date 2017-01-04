@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/mkozjak/mockster/api"
 	srv "github.com/mkozjak/mockster/services"
 	"github.com/mkozjak/mockster/types"
 	"github.com/spf13/pflag"
@@ -63,15 +64,18 @@ func main() {
 	}
 
 	// set up and run mock services
-	s, err := srv.New(cfg.Services)
-
-	if err != nil {
-		log.Println("unable to decode config:", err)
-		os.Exit(1)
-	}
+	s := srv.New(cfg.Services)
 
 	if err := s.RunAll(); err != nil {
 		log.Println("failed running services:", err)
+		os.Exit(1)
+	}
+
+	// run rest api
+	a := api.New(cfg.Api)
+
+	if err := a.Run(); err != nil {
+		log.Println("failed running rest api:", err)
 		os.Exit(1)
 	}
 
