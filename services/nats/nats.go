@@ -3,12 +3,13 @@ package nats
 import (
 	"log"
 	"net"
+	"strconv"
 )
 
 func Start(port int, host string) error {
 	log.Println("running nats mock server", port, host)
 
-	ln, err := net.Listen("tcp", host+":"+string(port))
+	ln, err := net.Listen("tcp", host+":"+strconv.Itoa(port))
 
 	if err != nil {
 		return err
