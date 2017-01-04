@@ -14,13 +14,13 @@ type Env struct {
 	registered [1]string
 }
 
-func New(cfg types.Services) (*Env, error) {
+func New(cfg types.Services) *Env {
 	s := new(Env)
 
 	s.registered[0] = "Nats"
 	s.cfgList = cfg
 
-	return s, nil
+	return s
 }
 
 func (s *Env) RunAll() error {
@@ -34,12 +34,8 @@ func (s *Env) RunAll() error {
 			// run service
 			switch srvName {
 			case "Nats":
-				if err := nats.Start(
-					s.cfgList.Nats.Port,
-					s.cfgList.Nats.Hostname); err != nil {
-
-					return err
-				}
+				// TODO: handle errors
+				go nats.Start(s.cfgList.Nats.Port, s.cfgList.Nats.Hostname)
 			}
 
 			break
