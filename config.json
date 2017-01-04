@@ -9,5 +9,9 @@
             "port": 5672,
             "enabled": false
         }
+    },
+    "api": {
+        "hostname": "127.0.0.1",
+        "port": 12345
     }
 }
