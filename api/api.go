@@ -10,20 +10,24 @@ import (
 	"github.com/mkozjak/mockster/types"
 )
 
+// Env holds an API instance configuration.
 type Env struct {
 	cfg types.Api
 }
 
+// InteractionParams represents 'interactions' api parameters.
 type InteractionParams struct {
 	Action string
 }
 
+// New returns an initiated Env that takes an api configuration.
 func New(cfg types.Api) *Env {
 	a := Env{cfg}
 
 	return &a
 }
 
+// Run starts an api server and sets up route listeners.
 func (a *Env) Run() error {
 	http.HandleFunc("/interactions", a.interactions)
 
@@ -35,6 +39,7 @@ func (a *Env) Run() error {
 	return nil
 }
 
+// interactions is a handler implementation for the 'interactions' api.
 func (a *Env) interactions(resp http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "POST":

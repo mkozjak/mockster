@@ -9,11 +9,13 @@ import (
 	"github.com/mkozjak/mockster/types"
 )
 
+// Env holds a services instance configuration.
 type Env struct {
 	cfgList    types.Services
 	registered [1]string
 }
 
+// New returns an initiated Env that takes services' configuration.
 func New(cfg types.Services) *Env {
 	s := new(Env)
 
@@ -23,6 +25,7 @@ func New(cfg types.Services) *Env {
 	return s
 }
 
+// RunAll starts all defined mock services.
 func (s *Env) RunAll() error {
 	// kinda hacky
 	for _, cfgSrv := range structs.Fields(s.cfgList) {
